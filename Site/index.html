@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planning Events - Gestão de Eventos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Planning Events</h1>
+        <p>Gerencie eventos: adicionar, inscrever participantes e consultar.</p>
+    </header>
+
+    <main>
+        <div class="controls-bar">
+            <button onclick="abrirModalAdicionarEvento()">➕ Adicionar Evento</button>
+            <button onclick="abrirModalInscreverParticipante()">👤 Inscrever Participante</button>
+            <button onclick="abrirModalConsultarInscritos()">📝 Consultar Inscritos</button>
+            <button onclick="removerEventoSelecionado()" class="btn-remover">🗑️ Remover Evento</button>
+            <span id="selecao-evento" class="badge">Nenhum evento selecionado</span>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Data</th>
+                        <th>Local</th>
+                        <th>Contato</th>
+                        <th>Inscritos</th>
+                    </tr>
+                </thead>
+                <tbody id="eventos-tbody">
+                    </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div id="modal-evento" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modal-evento')">&times;</span>
+            <h2>Adicionar Novo Evento</h2>
+            <form id="form-evento">
+                <label for="nome">Nome do Evento:</label>
+                <input type="text" id="nome" name="nome" required>
+                
+                <label for="data">Data (DD/MM/AAAA):</label>
+                <input type="text" id="data" name="data" placeholder="Ex: 31/12/2025" required>
+                
+                <label for="local">Local do Evento:</label>
+                <input type="text" id="local" name="local" required>
+                
+                <label for="telefone">Telefone para Contato:</label>
+                <input type="text" id="telefone" name="telefone">
+
+                <button type="submit">Salvar Evento</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-inscricao" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modal-inscricao')">&times;</span>
+            <h2 id="inscricao-titulo">Inscrever em: [Evento]</h2>
+            <form id="form-inscricao">
+                <label for="participante-nome">Nome Completo:</label>
+                <input type="text" id="participante-nome" name="nome" required>
+                
+                <label for="participante-email">Email:</label>
+                <input type="email" id="participante-email" name="email" required>
+
+                <button type="submit">Inscrever</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-inscritos" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modal-inscritos')">&times;</span>
+            <h2 id="inscritos-titulo">Inscritos: [Evento]</h2>
+            <div id="lista-inscritos">
+                </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

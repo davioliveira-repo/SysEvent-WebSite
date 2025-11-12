@@ -11,7 +11,7 @@ function loadEvents() {
         if (storedData) {
             const payload = JSON.parse(storedData);
             // JSON armazena chaves como string, converte de volta para int
-            eventos = Object.keys(payload.eventos).reduce((acc, key) => {
+            eventos = Object.keys(payload.eventos || {}).reduce((acc, key) => {
                 acc[parseInt(key)] = payload.eventos[key];
                 return acc;
             }, {});
@@ -197,7 +197,7 @@ document.getElementById('form-inscricao').onsubmit = function(e) {
     fecharModal('modal-inscricao');
 };
 
-// ---------------- Ações: Consultar Inscritos ----------------
+// ---------------- Ações: Consultar Inscritos (com remoção) ----------------
 function abrirModalConsultarInscritos() {
     const evento = getEventoSelecionado();
     if (!evento) return;
@@ -207,20 +207,60 @@ function abrirModalConsultarInscritos() {
     
     document.getElementById('inscritos-titulo').textContent = `Inscritos: ${evento.nome}`;
     
-    let texto = `Evento: ${evento.nome} (ID ${eventoSelecionadoID})\nTotal de inscritos: ${inscritos.length}\n\n`;
-
+    // Construir lista com botões de remover
     if (inscritos.length === 0) {
-        texto += "Nenhum participante inscrito.";
+        listaDiv.innerHTML = `<p>Nenhum participante inscrito.</p>`;
     } else {
-        inscritos.forEach(p => {
-            texto += `- ${p.nome} (${p.email})\n`;
+        const container = document.createElement('div');
+        inscritos.forEach((p, index) => {
+            const item = document.createElement('div');
+            item.className = 'inscrito-item';
+            
+            const info = document.createElement('div');
+            info.className = 'inscrito-info';
+            info.innerHTML = `<strong>${p.nome}</strong><br><small>${p.email}</small>`;
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn-remove-part';
+            btn.textContent = 'Remover';
+            btn.onclick = () => removerParticipante(index);
+            btn.setAttribute('aria-label', `Remover ${p.nome}`);
+            
+            item.appendChild(info);
+            item.appendChild(btn);
+            container.appendChild(item);
         });
+        listaDiv.innerHTML = '';
+        listaDiv.appendChild(container);
     }
 
-    // Exibe o texto formatado.
-    listaDiv.innerHTML = `<p>${texto.replace(/\n/g, '<br>')}</p>`;
-
     abrirModal('modal-inscritos');
+}
+
+// Remove participante pelo índice no array do evento selecionado
+function removerParticipante(index) {
+    const evento = getEventoSelecionado();
+    if (!evento) return;
+
+    const inscrito = evento.inscricoes && evento.inscricoes[index];
+    if (!inscrito) {
+        alert("Participante não encontrado.");
+        return;
+    }
+
+    if (!confirm(`Remover ${inscrito.nome} (${inscrito.email}) do evento '${evento.nome}'?`)) {
+        return;
+    }
+
+    // Remove e salva
+    evento.inscricoes.splice(index, 1);
+    saveEvents();
+    atualizarTabelaEventos();
+
+    // Atualiza a lista no modal (reabre/atualiza)
+    abrirModalConsultarInscritos();
+
+    alert(`${inscrito.nome} removido(a) de '${evento.nome}'.`);
 }
 
 // ---------------- Ações: Remover Evento ----------------

@@ -40,10 +40,10 @@
         </div>
     </main>
 
-    <div id="modal-evento" class="modal">
+    <div id="modal-evento" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-evento-title">
         <div class="modal-content">
-            <span class="close" onclick="fecharModal('modal-evento')">&times;</span>
-            <h2>Adicionar Novo Evento</h2>
+            <span class="close" onclick="fecharModal('modal-evento')" aria-label="Fechar">&times;</span>
+            <h2 id="modal-evento-title">Adicionar Novo Evento</h2>
             <form id="form-evento">
                 <label for="nome">Nome do Evento:</label>
                 <input type="text" id="nome" name="nome" required>
@@ -62,9 +62,9 @@
         </div>
     </div>
 
-    <div id="modal-inscricao" class="modal">
+    <div id="modal-inscricao" class="modal" role="dialog" aria-modal="true" aria-labelledby="inscricao-titulo">
         <div class="modal-content">
-            <span class="close" onclick="fecharModal('modal-inscricao')">&times;</span>
+            <span class="close" onclick="fecharModal('modal-inscricao')" aria-label="Fechar">&times;</span>
             <h2 id="inscricao-titulo">Inscrever em: [Evento]</h2>
             <form id="form-inscricao">
                 <label for="participante-nome">Nome Completo:</label>
@@ -78,12 +78,11 @@
         </div>
     </div>
 
-    <div id="modal-inscritos" class="modal">
+    <div id="modal-inscritos" class="modal" role="dialog" aria-modal="true" aria-labelledby="inscritos-titulo">
         <div class="modal-content">
-            <span class="close" onclick="fecharModal('modal-inscritos')">&times;</span>
+            <span class="close" onclick="fecharModal('modal-inscritos')" aria-label="Fechar">&times;</span>
             <h2 id="inscritos-titulo">Inscritos: [Evento]</h2>
-            <div id="lista-inscritos">
-                </div>
+            <div id="lista-inscritos" class="inscritos-lista"></div>
         </div>
     </div>
 

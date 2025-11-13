@@ -1,22 +1,18 @@
-// ---------------- Config e Estado Global ----------------
 const DATA_KEY = "planningEventsData";
 let eventos = {};
 let ID_CONTADOR = 1;
 let eventoSelecionadoID = null;
 
-// ---------------- Persistência (Local Storage) ----------------
 function loadEvents() {
     try {
         const storedData = localStorage.getItem(DATA_KEY);
         if (storedData) {
             const payload = JSON.parse(storedData);
-            // JSON armazena chaves como string, converte de volta para int
             eventos = Object.keys(payload.eventos || {}).reduce((acc, key) => {
                 acc[parseInt(key)] = payload.eventos[key];
                 return acc;
             }, {});
             
-            // Garante que ID_CONTADOR seja um número válido
             const nextId = parseInt(payload.next_id);
             ID_CONTADOR = isNaN(nextId) ? 1 : nextId;
 
@@ -34,7 +30,6 @@ function loadEvents() {
 
 function saveEvents() {
     try {
-        // Converte chaves de ID para string (necessário para serialização JSON)
         const payload = { 
             eventos: eventos, 
             next_id: ID_CONTADOR 
@@ -46,12 +41,10 @@ function saveEvents() {
     }
 }
 
-// ---------------- GUI: Tabela (Treeview) ----------------
 function atualizarTabelaEventos() {
     const tbody = document.getElementById('eventos-tbody');
-    tbody.innerHTML = ''; // Limpa as linhas existentes
+    tbody.innerHTML = '';
     
-    // Obtém as chaves (IDs) e ordena
     const idsOrdenados = Object.keys(eventos).map(Number).sort((a, b) => a - b);
 
     for (const id_evento of idsOrdenados) {
@@ -60,13 +53,11 @@ function atualizarTabelaEventos() {
         row.id = `row-${id_evento}`;
         row.onclick = () => selecionarLinha(id_evento, row);
 
-        // Verifica se é o evento selecionado para aplicar a classe 'selected'
         if (id_evento === eventoSelecionadoID) {
             row.classList.add('selected');
         }
 
-        // Colunas
-        row.insertCell().textContent = id_evento; // Coluna #0 (ID)
+        row.insertCell().textContent = id_evento;
         row.insertCell().textContent = dados.nome || "";
         row.insertCell().textContent = dados.data || "";
         row.insertCell().textContent = dados.local || "";
@@ -74,21 +65,17 @@ function atualizarTabelaEventos() {
         row.insertCell().textContent = dados.inscricoes ? dados.inscricoes.length : 0;
     }
     
-    // Atualiza o display de seleção após a tabela
     atualizarDisplaySelecao();
 }
 
 function selecionarLinha(id, rowElement) {
-    // 1. Remove a seleção de todas as outras linhas
     document.querySelectorAll('#eventos-tbody tr').forEach(tr => {
         tr.classList.remove('selected');
     });
 
-    // 2. Aplica a seleção à linha clicada
     rowElement.classList.add('selected');
     eventoSelecionadoID = id;
 
-    // 3. Atualiza o badge
     atualizarDisplaySelecao();
 }
 
@@ -112,7 +99,6 @@ function atualizarDisplaySelecao() {
     }
 }
 
-// ---------------- GUI: Modais ----------------
 function abrirModal(id) {
     document.getElementById(id).style.display = 'block';
 }
@@ -121,17 +107,15 @@ function fecharModal(id) {
     document.getElementById(id).style.display = 'none';
 }
 
-// Fechar modal ao clicar fora
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         event.target.style.display = "none";
     }
 }
 
-// ---------------- Ações: Adicionar Evento ----------------
 function abrirModalAdicionarEvento() {
     const form = document.getElementById('form-evento');
-    form.reset(); // Limpa o formulário
+    form.reset();
     abrirModal('modal-evento');
 }
 
@@ -164,7 +148,6 @@ document.getElementById('form-evento').onsubmit = function(e) {
     fecharModal('modal-evento');
 };
 
-// ---------------- Ações: Inscrever Participante ----------------
 function abrirModalInscreverParticipante() {
     const evento = getEventoSelecionado();
     if (!evento) return;
@@ -197,7 +180,6 @@ document.getElementById('form-inscricao').onsubmit = function(e) {
     fecharModal('modal-inscricao');
 };
 
-// ---------------- Ações: Consultar Inscritos (com remoção) ----------------
 function abrirModalConsultarInscritos() {
     const evento = getEventoSelecionado();
     if (!evento) return;
@@ -207,7 +189,6 @@ function abrirModalConsultarInscritos() {
     
     document.getElementById('inscritos-titulo').textContent = `Inscritos: ${evento.nome}`;
     
-    // Construir lista com botões de remover
     if (inscritos.length === 0) {
         listaDiv.innerHTML = `<p>Nenhum participante inscrito.</p>`;
     } else {
@@ -237,7 +218,6 @@ function abrirModalConsultarInscritos() {
     abrirModal('modal-inscritos');
 }
 
-// Remove participante pelo índice no array do evento selecionado
 function removerParticipante(index) {
     const evento = getEventoSelecionado();
     if (!evento) return;
@@ -252,18 +232,15 @@ function removerParticipante(index) {
         return;
     }
 
-    // Remove e salva
     evento.inscricoes.splice(index, 1);
     saveEvents();
     atualizarTabelaEventos();
 
-    // Atualiza a lista no modal (reabre/atualiza)
     abrirModalConsultarInscritos();
 
     alert(`${inscrito.nome} removido(a) de '${evento.nome}'.`);
 }
 
-// ---------------- Ações: Remover Evento ----------------
 function removerEventoSelecionado() {
     if (!eventoSelecionadoID || !eventos[eventoSelecionadoID]) {
         alert("Selecione um evento para remover.");
@@ -274,14 +251,13 @@ function removerEventoSelecionado() {
 
     if (confirm(`Tem certeza que deseja remover o evento '${nomeEvento}' (ID ${eventoSelecionadoID})?`)) {
         delete eventos[eventoSelecionadoID];
-        eventoSelecionadoID = null; // Limpa a seleção
+        eventoSelecionadoID = null;
         saveEvents();
         atualizarTabelaEventos();
         alert(`Evento '${nomeEvento}' removido.`);
     }
 }
 
-// ---------------- Inicialização ----------------
 document.addEventListener('DOMContentLoaded', () => {
     loadEvents();
     atualizarTabelaEventos();

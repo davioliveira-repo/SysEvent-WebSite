@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Planning Events - Gestão de Eventos</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -15,11 +15,18 @@
 
     <main>
         <div class="controls-bar">
-            <button onclick="abrirModalAdicionarEvento()">➕ Adicionar Evento</button>
-            <button onclick="abrirModalInscreverParticipante()">👤 Inscrever Participante</button>
-            <button onclick="abrirModalConsultarInscritos()">📝 Consultar Inscritos</button>
-            <button onclick="removerEventoSelecionado()" class="btn-remover">🗑️ Remover Evento</button>
+            <button id="btn-adicionar" onclick="abrirModalAdicionarEvento()">➕ Adicionar Evento</button>
+            <button id="btn-inscrever" onclick="abrirModalInscreverParticipante()">👤 Inscrever Participante</button>
+            <button id="btn-consultar" onclick="abrirModalConsultarInscritos()">📝 Consultar Inscritos</button>
+            <button id="btn-remover-evento" onclick="removerEventoSelecionado()" class="btn-remover">🗑️ Remover Evento</button>
+
             <span id="selecao-evento" class="badge">Nenhum evento selecionado</span>
+
+            <div class="user-area">
+                <span id="user-display" class="user-display" aria-live="polite"></span>
+                <button id="btn-login" onclick="abrirModal('modal-login')">🔐 Login</button>
+                <button id="btn-logout" onclick="logout()" style="display:none">Sair</button>
+            </div>
         </div>
 
         <div class="table-container">
@@ -34,55 +41,80 @@
                         <th>Inscritos</th>
                     </tr>
                 </thead>
-                <tbody id="eventos-tbody">
-                    </tbody>
+                <tbody id="eventos-tbody"></tbody>
             </table>
         </div>
     </main>
 
+    <!-- Modal: Adicionar/Editar Evento -->
     <div id="modal-evento" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-evento-title">
         <div class="modal-content">
             <span class="close" onclick="fecharModal('modal-evento')" aria-label="Fechar">&times;</span>
             <h2 id="modal-evento-title">Adicionar Novo Evento</h2>
             <form id="form-evento">
                 <label for="nome">Nome do Evento:</label>
-                <input type="text" id="nome" name="nome" required>
-                
+                <input type="text" id="nome" name="nome" required />
+
                 <label for="data">Data (DD/MM/AAAA):</label>
-                <input type="text" id="data" name="data" placeholder="Ex: 31/12/2025" required>
-                
+                <input type="text" id="data" name="data" placeholder="Ex: 31/12/2025" required />
+
                 <label for="local">Local do Evento:</label>
-                <input type="text" id="local" name="local" required>
-                
+                <input type="text" id="local" name="local" required />
+
                 <label for="telefone">Telefone para Contato:</label>
-                <input type="text" id="telefone" name="telefone">
+                <input type="text" id="telefone" name="telefone" />
 
                 <button type="submit">Salvar Evento</button>
             </form>
         </div>
     </div>
 
+    <!-- Modal: Inscrição -->
     <div id="modal-inscricao" class="modal" role="dialog" aria-modal="true" aria-labelledby="inscricao-titulo">
         <div class="modal-content">
             <span class="close" onclick="fecharModal('modal-inscricao')" aria-label="Fechar">&times;</span>
             <h2 id="inscricao-titulo">Inscrever em: [Evento]</h2>
             <form id="form-inscricao">
                 <label for="participante-nome">Nome Completo:</label>
-                <input type="text" id="participante-nome" name="nome" required>
-                
+                <input type="text" id="participante-nome" name="nome" required />
+
                 <label for="participante-email">Email:</label>
-                <input type="email" id="participante-email" name="email" required>
+                <input type="email" id="participante-email" name="email" required />
 
                 <button type="submit">Inscrever</button>
             </form>
         </div>
     </div>
 
+    <!-- Modal: Consultar Inscritos -->
     <div id="modal-inscritos" class="modal" role="dialog" aria-modal="true" aria-labelledby="inscritos-titulo">
         <div class="modal-content">
             <span class="close" onclick="fecharModal('modal-inscritos')" aria-label="Fechar">&times;</span>
             <h2 id="inscritos-titulo">Inscritos: [Evento]</h2>
             <div id="lista-inscritos" class="inscritos-lista"></div>
+        </div>
+    </div>
+
+    <!-- Modal: Login -->
+    <div id="modal-login" class="modal" role="dialog" aria-modal="true" aria-labelledby="login-titulo">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('modal-login')" aria-label="Fechar">&times;</span>
+            <h2 id="login-titulo">Login</h2>
+            <form id="form-login">
+                <label for="login-nome">Nome de usuário:</label>
+                <input type="text" id="login-nome" name="login-nome" placeholder="Seu nome" required />
+
+                <label for="login-senha">Senha:</label>
+                <input type="password" id="login-senha" name="login-senha" required />
+
+                <button type="submit">Entrar</button>
+            </form>
+
+            <div style="margin-top:10px">
+                <button onclick="continuarComoVisitante()">Continuar como visitante</button>
+            </div>
+
+            <!-- Nota: NÃO listar usuários autorizados aqui -->
         </div>
     </div>
 
